@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Rede Social</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #formulario {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 10px;
+            box-shadow: 0px 4px 2px -2px gray;
+        }
+        #postagens {
+            margin-top: 80px;
+            list-style: none;
+            padding: 0;
+        }
+        .post {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px auto;
+            width: 300px;
+            text-align: left;
+        }
+        .post img {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="formulario">
+        <textarea id="texto" placeholder="O que está acontecendo?"></textarea>
+        <button onclick="postar()">Postar</button>
+    </div>
+    <ul id="postagens"></ul>
+
+    <script>
+        let posts = [];
+
+        async function postar() {
+            const texto = document.getElementById("texto").value.trim();
+            if (!texto) return;
+
+            const response = await fetch("https://api.thecatapi.com/v1/images/search");
+            const data = await response.json();
+            const imagemGato = data[0]?.url || "https://via.placeholder.com/150";
+
+            const novoPost = {
+                usuario: "@usuario",
+                avatar: "https://via.placeholder.com/40",
+                texto,
+                imagem: imagemGato,
+                likes: 0,
+                data: new Date()
+            };
+
+            posts.unshift(novoPost);
+            document.getElementById("texto").value = "";
+            atualizarFeed();
+        }
+
+        function curtir(index) {
+            posts[index].likes++;
+            atualizarFeed();
+        }
+
+        function atualizarFeed() {
+            const lista = document.getElementById("postagens");
+            lista.innerHTML = "";
+            posts.forEach((post, index) => {
+                const li = document.createElement("li");
+                li.className = "post";
+                li.innerHTML = `
+                    <div class="header">
+                        <img class="avatar" src="${post.avatar}" alt="Avatar">
+                        <strong>${post.usuario}</strong>
+                    </div>
+                    <p>${post.texto}</p>
+                    <img src="${post.imagem}" alt="Gatinho fofo">
+                    <button onclick="curtir(${index})">Curtir (${post.likes})</button>
+                `;
+                lista.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>

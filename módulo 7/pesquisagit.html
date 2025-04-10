@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca de Usuários GitHub</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #resultado {
+            margin-top: 20px;
+            list-style: none;
+            padding: 0;
+        }
+        .usuario {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #ddd;
+            padding: 10px;
+        }
+        img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Buscar Usuários do GitHub</h1>
+    <input type="text" id="busca" placeholder="Digite um nome de usuário">
+    <button onclick="buscarUsuarios()">Buscar</button>
+    <ul id="resultado"></ul>
+
+    <script>
+        async function buscarUsuarios() {
+            const query = document.getElementById("busca").value.trim();
+            const resultado = document.getElementById("resultado");
+            resultado.innerHTML = "";
+
+            if (!query) {
+                resultado.innerHTML = "<li>Digite um termo de busca.</li>";
+                return;
+            }
+
+            try {
+                const response = await fetch(`https://api.github.com/search/users?q=${query}`);
+                const data = await response.json();
+
+                if (data.items && data.items.length > 0) {
+                    data.items.forEach(user => {
+                        const li = document.createElement("li");
+                        li.className = "usuario";
+                        li.innerHTML = `
+                            <img src="${user.avatar_url}" alt="Avatar">
+                            <a href="${user.html_url}" target="_blank">${user.login}</a>
+                        `;
+                        resultado.appendChild(li);
+                    });
+                } else {
+                    resultado.innerHTML = "<li>Não foram encontrados usuários para esta pesquisa.</li>";
+                }
+            } catch (error) {
+                resultado.innerHTML = "<li>Erro ao buscar usuários. Tente novamente.</li>";
+            }
+        }
+    </script>
+</body>
+</html>
