@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Tarefas</title>
+    <style>
+        .tarefa {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 5px 0;
+        }
+        .concluida {
+            text-decoration: line-through;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lista de Tarefas</h1>
+    <input type="text" id="descricao" placeholder="Digite a tarefa">
+    <button onclick="adicionarTarefa()">Adicionar</button>
+    <ul id="listaTarefas"></ul>
+
+    <script>
+        let tarefas = JSON.parse(localStorage.getItem("tarefas")) || [];
+        atualizarLista();
+
+        function adicionarTarefa() {
+            const descricao = document.getElementById("descricao").value.trim();
+            if (descricao) {
+                tarefas.push({ descricao, status: false });
+                localStorage.setItem("tarefas", JSON.stringify(tarefas));
+                document.getElementById("descricao").value = "";
+                atualizarLista();
+            }
+        }
+
+        function alterarStatus(index) {
+            tarefas[index].status = !tarefas[index].status;
+            localStorage.setItem("tarefas", JSON.stringify(tarefas));
+            atualizarLista();
+        }
+
+        function excluirTarefa(index) {
+            tarefas.splice(index, 1);
+            localStorage.setItem("tarefas", JSON.stringify(tarefas));
+            atualizarLista();
+        }
+
+        function atualizarLista() {
+            const lista = document.getElementById("listaTarefas");
+            lista.innerHTML = "";
+            tarefas.forEach((tarefa, index) => {
+                const li = document.createElement("li");
+                li.className = "tarefa";
+                
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.checked = tarefa.status;
+                checkbox.onclick = () => alterarStatus(index);
+                
+                const span = document.createElement("span");
+                span.textContent = tarefa.descricao;
+                if (tarefa.status) {
+                    span.classList.add("concluida");
+                }
+                
+                const botaoExcluir = document.createElement("button");
+                botaoExcluir.textContent = "Excluir";
+                botaoExcluir.onclick = () => excluirTarefa(index);
+                
+                li.appendChild(checkbox);
+                li.appendChild(span);
+                li.appendChild(botaoExcluir);
+                lista.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>

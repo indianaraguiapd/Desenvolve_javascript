@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manipulação do DOM</title>
+    <style>
+        .destaque {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="titulo">Título Original</h1>
+    <ul>
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+    </ul>
+    <p>Parágrafo 1</p>
+    <p>Parágrafo 2</p>
+    <p>Parágrafo 3</p>
+    <button id="botao">Clique Aqui</button>
+    
+    <script>
+        document.getElementById("titulo").textContent = "Novo Título";
+
+        document.querySelectorAll("ul li").forEach(item => {
+            item.style.color = "blue";
+            item.style.fontSize = "18px";
+        });
+
+        document.querySelectorAll("p").forEach(paragrafo => {
+            paragrafo.classList.add("destaque");
+        });
+
+        document.getElementById("botao").textContent = "Texto Alterado";
+    </script>
+</body>
+</html>
